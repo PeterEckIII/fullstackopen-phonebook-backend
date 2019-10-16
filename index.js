@@ -59,14 +59,15 @@ app.get('/api/', (req, res) => {
 app.get('/api/people', (req, res) => {
     Person
         .find({})
-        .then(person => {
-            res.json(persons.map(person => person.toJSON()))
+        .then(people => {
+            res.json(people.map(person => person.toJSON()))
         })
 })
 
-// Persons
+// Person
 app.get('/api/people/:id', (req, res) => {
-    Person.findById(req.params.id)
+    Person
+        .findById(req.params.id)
         .then(person => res.json(person.toJSON()))
 })
 
