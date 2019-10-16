@@ -4,21 +4,14 @@ const password = process.argv[2];
 
 // Fix issue with Mongo saving an undefined entry when no name or number is given
 
-const url = `mongodb+srv://peter_eck:${password}@phonebook-pnfhz.mongodb.net/phonebook?retryWrites=true&w=majority`
 
-mongoose.connect(url, {useNewUrlParser: true});
-
-const personSchema = new mongoose.Schema({
-    name: String,
-    number: String,
-});
-
-const Person = mongoose.model('Person', personSchema);
 
 if(process.argv[3] === undefined) {
     Person.find({}).then(res => {
         console.log(`Phonebook`);
-        console.log(res);
+        res.forEach(person => {
+            console.log(`${person.name} --- ${person.number}`)
+        })
         process.exit(1);
         mongoose.connection.close();
     })

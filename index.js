@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
+const Person = require('./models/person')
 
 app.use(bodyParser.json());
 app.use(express.static('build'));
@@ -50,21 +52,22 @@ const generateId = () => {
 
 // Home
 app.get('/api/', (req, res) => {
-    res.send('<h1>Home Page</h1>');
+    res.send('./build/index.html');
 })
 
 // People
 app.get('/api/people', (req, res) => {
-    res.send(persons);
+    Person
+        .find({})
+        .then(person => {
+            res.json(persons.map(person => person.toJSON()))
+        })
 })
 
 // Persons
 app.get('/api/people/:id', (req, res) => {
-    const id = Number(req.params.id);
-    const person = persons.find(person => person.id === id)
-    person
-        ? res.send(person)
-        : res.status(404).end()
+    Person.findById(req.params.id)
+        .then(person => res.json(person.toJSON()))
 })
 
 // Add Person
@@ -95,9 +98,9 @@ app.post('/api/people/', (req, res) => {
         number: body.number,
         id: generateId()
     }
-
-    persons = [...persons, person];
-    res.json(person);
+    person.save().then(savedPerson => {
+        res.json(savedPerson.toJSON())
+    })
 })
 
 // Delete Person
@@ -107,7 +110,7 @@ app.delete('/api/people/:id', (req, res) => {
     res.status(204).end();
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT;
 // Listen
 app.listen(PORT, (req, res) => {
     console.log(`Listening on port ${PORT}`);
