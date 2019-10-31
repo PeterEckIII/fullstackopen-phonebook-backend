@@ -49,54 +49,50 @@ const generateId = () => {
 }
 
 // Home
-app.get('/api/', (req, res) => {
-    res.send('./build/index.html');
+app.get('/info', (req, res) => {
+    const date = new Date()
+    const numOfPersons = persons.length;
+    const message = `Phonebook has info for ${ numOfPersons } people \n ${ date }`
+    res.send(message);
 })
 
-// People
-app.get('/api/people', (req, res) => {
-
+// persons
+app.get('/api/persons', (req, res) => {
+    res.json(persons);
 })
 
 // Person
-app.get('/api/people/:id', (req, res) => {
-
+app.get('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id);
+    const person = persons.find(person => person.id === id);
+    person ? res.json(person) : res.status(404).end();
 })
 
 // Add Person
-app.post('/api/people/', (req, res) => {
+app.post('/api/persons/', (req, res) => {
     const body = req.body;
-    if (!body.name) {
+    if (!body) {
         return res.status(400).json({
-            error: 'name missing'
+            error: 'Missing fields'
+        })
+    } else if (persons.includes(body.name)) {
+        return res.status(400).json({
+            error: 'Name already in phonebook'
         })
     }
-    if (!body.number) {
-        return res.status(400).json({
-            error: 'number missing'
-        })
-    }
-    if (persons.map(person => person.name).includes(body.name)) {
-        return res.status(400).json({
-            error: 'name already in phone book'
-        })
-    }
-    if (persons.map(person => person.number).includes(body.number)) {
-        return res.status(400).json({
-            error: 'number already in phone book'
-        })
-    }
+
     const person = {
         name: body.name,
         number: body.number,
         id: generateId()
     }
-
+    persons = [ ...persons, person ];
+    res.json(person);
 })
 
 // Delete Person
-app.delete('/api/people/:id', (req, res) => {
-    const id = Number(req.params.id);
+app.delete('/api/persons/:id', (req, res) => {
+    const id = req.params.id;
     persons = persons.filter(person => person.id !== id);
     res.status(204).end();
 })
@@ -104,5 +100,5 @@ app.delete('/api/people/:id', (req, res) => {
 const PORT = 3001;
 // Listen
 app.listen(PORT, (req, res) => {
-    console.log(`Listening on port ${PORT}`);
+    console.log(`Listening on port ${ PORT }`);
 })
