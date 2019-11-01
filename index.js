@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -103,7 +104,7 @@ app.delete('/api/persons/:id', (req, res) => {
     res.status(204).end();
 })
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 // Listen
 app.listen(PORT, (req, res) => {
     console.log(`Listening on port ${ PORT }`);
