@@ -3,9 +3,10 @@ const app = express();
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
+const path = require('path');
 
 app.use(bodyParser.json());
-app.use(express.static('build'));
+app.use(express.static(path.join(__dirname, 'build')));
 app.use(cors());
 
 // Logging
@@ -49,6 +50,11 @@ const generateId = () => {
 }
 
 // Home
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + "/build/index.html")
+})
+
+// Info
 app.get('/info', (req, res) => {
     const date = new Date()
     const numOfPersons = persons.length;
