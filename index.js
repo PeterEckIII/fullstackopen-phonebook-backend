@@ -60,14 +60,30 @@ app.get('/api/persons/', (req, res) => {
 })
 
 // Person
-app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id);
-    const person = persons.find(person => person.id === id);
-    person ? res.json(person) : res.status(404).end();
+app.get('/api/persons/:id', (req, res, next) => {
+    Person
+        .findById(req.params.id)
+        .then(person => person ? res.json(person.toJSON()) : res.status(404).end())
+        .catch(e => next(e))
+})
+
+// Update Person
+app.put('/api/persons/:id', (req, res, next) => {
+    const body = req.body;
+
+    const person = {
+        name: body.name,
+        number: body.number
+    }
+
+    Person
+        .findByIdAndUpdate(req.params.id, person, { new: true })
+        .then(updatedPerson => res.json(updatedPerson.toJSON()))
+        .catch(e => next(e))
 })
 
 // Add Person
-app.post('/api/persons/', (req, res) => {
+app.post('/api/persons/', (req, res, next) => {
     const body = req.body;
     if (!body) {
         return res.status(400).json({
@@ -86,16 +102,36 @@ app.post('/api/persons/', (req, res) => {
         })
 })
 
-
 // Delete Person
-app.delete('/api/persons/:id', (req, res) => {
-    const id = req.params.id;
-    persons = persons.filter(person => person.id !== id);
-    res.status(204).end();
+app.delete('/api/persons/:id', (req, res, next) => {
+    Person
+        .findByIdAndRemove(req.params.id)
+        .then(removedPerson => {
+            res.status(204).end();
+        })
+        .catch(e => next(e))
 })
 
-const PORT = process.env.PORT || 3001;
+const unknownEndpoint = (req, res) => {
+    res.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint);
+
+const errorHandler = (error, req, res, next) => {
+    console.log(error.message);
+    if (error.name === 'CastError' && error.kind === 'ObjectID') {
+        return res.status(404).send({ error: 'Malformatted ID' })
+    }
+
+    next(error);
+}
+
+app.use(errorHandler);
+
 // Listen
+const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, (req, res) => {
     console.log(`Listening on port ${ PORT }`);
 })
