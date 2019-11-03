@@ -7,6 +7,7 @@ const cors = require('cors');
 const path = require('path');
 const Person = require('./models/person');
 
+// Configure App
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'build')));
 app.use(cors());
@@ -22,11 +23,6 @@ morgan.token('body', function getBody(req) {
 })
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms - :body'));
-
-const generateId = () => {
-    const id = Math.floor(Math.random() * 200000000000)
-    return id;
-}
 
 // CLIENT //
 
@@ -52,13 +48,13 @@ app.get('/info', (req, res) => {
 /////////////
 
 // persons
-app.get('/api/persons', (req, res) => {
+app.get('/api/persons/', (req, res) => {
     Person
         .find({})
         .then(persons => {
             res.json(persons.map(person => person.toJSON()))
         })
-        .catch(e => console.warn(`ERROR FETCHING DATA ${ e }`))
+        .catch(e => console.warn(`ERROR FETCHING DATA ${ e.message }`))
 })
 
 // Person
