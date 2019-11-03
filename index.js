@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
 const path = require('path');
+const Person = require('./models/person.js');
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'build')));
@@ -55,6 +56,8 @@ const generateId = () => {
     return id;
 }
 
+// CLIENT //
+
 // Home
 app.get('/', (req, res) => {
     res.sendFile(__dirname + "/build/index.html")
@@ -72,9 +75,16 @@ app.get('/info', (req, res) => {
     res.send(message);
 })
 
+// API //
+
 // persons
 app.get('/api/persons', (req, res) => {
-    res.json(persons);
+    Person
+        .find({})
+        .then(persons => {
+            res.json(persons.map(person => person.toJSON()))
+        })
+        .catch(e => console.warn(`ERROR FETCHING DATA ${ e }`))
 })
 
 // Person
