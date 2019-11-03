@@ -75,7 +75,9 @@ app.get('/info', (req, res) => {
     res.send(message);
 })
 
-// API //
+/////////////
+//// API ////
+/////////////
 
 // persons
 app.get('/api/persons', (req, res) => {
