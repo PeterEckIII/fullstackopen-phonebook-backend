@@ -22,6 +22,7 @@ morgan.token('body', function getBody(req) {
     return JSON.stringify(loggedBody)
 })
 
+
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms - :body'));
 
 // CLIENT //
