@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 
 const url = process.env.MONGO_URI;
 
+console.log(`Connecting to ${ url }`)
+
 mongoose
     .connect(url, { useNewUrlParser: true })
     .then(result => console.log(`CONNECTED TO MONGO DB`))
