@@ -73,19 +73,17 @@ app.post('/api/persons/', (req, res) => {
         return res.status(400).json({
             error: 'Missing fields'
         })
-    } else if (persons.includes(body.name)) {
-        return res.status(400).json({
-            error: 'Name already in phonebook'
-        })
     }
-
-    const person = {
+    const person = new Person({
         name: body.name,
         number: body.number,
-        id: generateId()
-    }
-    persons = [ ...persons, person ];
-    res.json(person);
+    });
+
+    person
+        .save()
+        .then(savedPerson => {
+            res.json(person);
+        })
 })
 
 // Delete Person
