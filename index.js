@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
 const path = require('path');
-const Person = require('./models/person.js');
+const Person = require('./models/person');
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'build')));
@@ -22,34 +22,6 @@ morgan.token('body', function getBody(req) {
 })
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms - :body'));
-
-let persons = [
-    {
-        name: 'Peter Eck',
-        number: '217-971-0290',
-        id: 1
-    },
-    {
-        name: 'Katie Hofer',
-        number: '304-951-3849',
-        id: 2
-    },
-    {
-        name: 'Lynn Eck',
-        number: '217-971-8478',
-        id: 3
-    },
-    {
-        name: 'John Eck',
-        number: '217-899-0655',
-        id: 4
-    },
-    {
-        name: 'Ryan Eck',
-        number: '217-971-9661',
-        id: 5
-    }
-];
 
 const generateId = () => {
     const id = Math.floor(Math.random() * 200000000000)
