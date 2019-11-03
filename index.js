@@ -64,7 +64,11 @@ app.get('/', (req, res) => {
 app.get('/info', (req, res) => {
     const date = new Date()
     const numOfPersons = persons.length;
-    const message = `Phonebook has info for ${ numOfPersons } people \n ${ date }`
+    const message = `
+        Phonebook has info for ${ numOfPersons } people 
+        \n 
+        fetched on: ${ date }
+    `
     res.send(message);
 })
 
